@@ -4,7 +4,13 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/KRichEditor.iml" filepath="$PROJECT_DIR$/.idea/modules/KRichEditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KRichEditor.app.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.iml" filepath="$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/krichtexteditor/KRichEditor.krichtexteditor.unitTest.iml" />
     </modules>
   </component>
 </project>

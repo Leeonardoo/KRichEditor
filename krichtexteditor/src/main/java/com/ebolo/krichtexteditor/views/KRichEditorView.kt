@@ -542,7 +542,6 @@ class KRichEditorView : FrameLayout {
 
             it.settings.javaScriptEnabled = true
             it.settings.domStorageEnabled = true
-            // settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
             isFocusable = true
             isFocusableInTouchMode = true
