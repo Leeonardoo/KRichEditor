@@ -32,6 +32,7 @@ class EditorToolbar(private val editor: RichEditor, private val buttonsLayout: L
             val imageView = buttonLayout.findViewById<AppCompatImageView>(R.id.image_view)
             imageView.apply {
                 setImageResource(EditorButton.actionButtonDrawables[actionType]!!)
+                setColorFilter(buttonDeactivatedColor)
                 setOnClickListener {
                     when (actionType) {
                         EditorButton.IMAGE -> imageButtonAction?.invoke()
