@@ -113,7 +113,7 @@ class KRichEditorView : FrameLayout {
         com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog
 
     fun initView(options: Options = Options.DEFAULT) {
-        WebView.setWebContentsDebuggingEnabled(true)
+        //WebView.setWebContentsDebuggingEnabled(true)
         onInitialized = options.onInitialized
         placeHolder = options.placeHolder
         imageButtonAction = options.imageButtonAction
