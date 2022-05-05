@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             Options(
                 onClickImageButton = { ImagePicker.create(this@MainActivity).start() },
                 placeHolder = "Write something cool..",
-                buttonsLayout = listOf(
+                allowedButtons = listOf(
                     EditorButton.UNDO,
                     EditorButton.REDO,
                     EditorButton.IMAGE,

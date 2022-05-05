@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import android.widget.*
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.R
 import com.ebolo.krichtexteditor.RichEditor
@@ -51,7 +52,7 @@ class KRichEditorView : FrameLayout {
     private val toolsContainer: LinearLayout by lazy {
         findViewById(R.id.tools_container)
     }
-    private val editorMenuScrollView: ScrollView by lazy {
+    private val editorMenuScrollView: NestedScrollView by lazy {
         findViewById(R.id.editor_menu_scroll_view)
     }
     private val editorMenuContainer: FrameLayout by lazy {
@@ -68,7 +69,7 @@ class KRichEditorView : FrameLayout {
     private var readOnly = false
 
     // Default buttons layout
-    private var buttonsLayout = listOf(
+    private var allowedButtons = listOf(
         EditorButton.UNDO,
         EditorButton.REDO,
         EditorButton.IMAGE,
@@ -114,7 +115,7 @@ class KRichEditorView : FrameLayout {
         onInitialized = options.onInitialized
         placeHolder = options.placeHolder
         imageButtonAction = options.onClickImageButton
-        buttonsLayout = options.buttonsLayout
+        allowedButtons = options.allowedButtons
         buttonActivatedColor = options.buttonActivatedColor
         buttonDeactivatedColor = options.buttonDeactivatedColor
         showToolbar = options.showToolbar
@@ -127,10 +128,10 @@ class KRichEditorView : FrameLayout {
         if (!showToolbar || readOnly) {
             toolbar.visibility = View.GONE
         } else if (showToolbar) {
-            editorToolbar = EditorToolbar(editor, buttonsLayout).apply {
-                if (EditorButton.LINK in buttonsLayout)
+            editorToolbar = EditorToolbar(editor, allowedButtons).apply {
+                if (EditorButton.LINK in allowedButtons)
                     linkButtonAction = { onMenuButtonClicked(EditorButton.LINK) }
-                if (EditorButton.IMAGE in buttonsLayout)
+                if (EditorButton.IMAGE in allowedButtons)
                     imageButtonAction = { onMenuButtonClicked(EditorButton.IMAGE) }
 
                 buttonActivatedColor = this@KRichEditorView.buttonActivatedColor
@@ -734,7 +735,7 @@ data class Options(
     val placeHolder: String,
     val onClickImageButton: () -> Unit = {},
     val onClickAddUrl: () -> Unit = {},
-    val buttonsLayout: List<EditorButton> = listOf(
+    val allowedButtons: List<EditorButton> = listOf(
         EditorButton.UNDO,
         EditorButton.REDO,
         EditorButton.IMAGE,
