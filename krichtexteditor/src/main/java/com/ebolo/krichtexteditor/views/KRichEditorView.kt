@@ -49,6 +49,7 @@ class KRichEditorView : FrameLayout {
     // Customizable settings
     private var placeHolder = "Start writing..."
     private var imageButtonAction: (() -> Unit)? = null
+    private var onClickAddUrl: ((hasTextSelected: Boolean) -> Unit)? = null
     private var showToolbar = true
     private var readOnly = false
 
@@ -95,6 +96,7 @@ class KRichEditorView : FrameLayout {
         onInitialized = options.onInitialized
         placeHolder = options.placeHolder
         imageButtonAction = options.onClickImageButton
+        onClickAddUrl = options.onClickAddUrl
         allowedButtons = options.allowedButtons
         buttonActivatedColor = options.buttonActivatedColor
         buttonDeactivatedColor = options.buttonDeactivatedColor
@@ -173,52 +175,22 @@ class KRichEditorView : FrameLayout {
             EditorButton.LINK -> {
                 editor.getSelection { value ->
                     val selection = Gson().fromJson<Map<String, Int>>(value)
-                    if (selection["length"]!! > 0) {
-                        if (!editor.selectingLink()) {
-                            // Setup dialog view
-                            val inflatedView = LayoutInflater.from(context).inflate(
-                                R.layout.address_input_dialog,
-                                parent as ViewGroup?,
-                                false
-                            )
+                    val hasTextSelected = (selection["length"] ?: 0) > 0
 
-                            val addressInput: TextInputEditText? = inflatedView.findViewById(
-                                R.id.address_input
-                            )
-
-//                            MaterialAlertDialogBuilder(context, dialogStyle).also {
-//                                it.setView(inflatedView)
-//                                it.setPositiveButton(android.R.string.ok) { _, _ ->
-//                                    val urlValue = addressInput?.text.toString()
-//                                    if (urlValue.startsWith("http://", true)
-//                                        || urlValue.startsWith("https://", true)
-//                                    ) {
-//                                        hideMenu()
-//                                        editor.command(EditorButton.LINK, urlValue)
-//                                    } else {
-//                                        Toast.makeText(
-//                                            context,
-//                                            R.string.link_missing_protocol,
-//                                            Toast.LENGTH_LONG
-//                                        ).show()
-//                                    }
-//                                }
-//                                it.setNegativeButton(android.R.string.cancel) { _, _ -> }
-//                            }.show()
-                        } else {
-                            editor.command(EditorButton.LINK, "")
-                        }
-                    } else {
-                        Snackbar.make(
-                            rootView,
-                            R.string.link_empty_warning,
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                    if (hasTextSelected && editor.selectingLink()) {
+                        editor.command(EditorButton.LINK, "")
+                        return@getSelection
+                    } else if (!editor.selectingLink()) {
+                        onClickAddUrl?.invoke(hasTextSelected)
                     }
                 }
             }
             else -> editor.command(type)
         }
+    }
+
+    fun addUrl(url: String) {
+        editor.command(EditorButton.LINK, url)
     }
 
     private fun setupListeners(context: Context) {
@@ -287,7 +259,7 @@ class KRichEditorView : FrameLayout {
 data class Options(
     val placeHolder: String,
     val onClickImageButton: () -> Unit = {},
-    val onClickAddUrl: () -> Unit = {},
+    val onClickAddUrl: (hasTextSelected: Boolean) -> Unit = {},
     val allowedButtons: List<EditorButton> = listOf(
         EditorButton.UNDO,
         EditorButton.REDO,

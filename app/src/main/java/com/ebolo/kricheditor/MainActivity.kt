@@ -3,13 +3,19 @@ package com.ebolo.kricheditor
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ebolo.krichtexteditor.ui.enums.EditorButton
 import com.ebolo.krichtexteditor.views.KRichEditorView
 import com.ebolo.krichtexteditor.views.Options
 import com.esafirm.imagepicker.features.ImagePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import io.paperdb.Paper
 import org.jetbrains.anko.alert
 
@@ -62,6 +68,45 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     editorView.editor.setContents(
                         Paper.book("demo").read("content", "")
                     )
+                },
+                onClickAddUrl = { hasTextSelected ->
+                    if (!hasTextSelected) {
+                        Snackbar.make(
+                            editorView.rootView,
+                            com.ebolo.krichtexteditor.R.string.link_empty_warning,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    } else {
+                        // Setup dialog view
+                        val inflatedView = LayoutInflater.from(this).inflate(
+                            com.ebolo.krichtexteditor.R.layout.address_input_dialog,
+                            parent as ViewGroup?,
+                            false
+                        )
+
+                        val addressInput: TextInputEditText? = inflatedView.findViewById(
+                            com.ebolo.krichtexteditor.R.id.address_input
+                        )
+
+                        MaterialAlertDialogBuilder(this).also {
+                            it.setView(inflatedView)
+                            it.setPositiveButton(android.R.string.ok) { _, _ ->
+                                val urlValue = addressInput?.text.toString()
+                                if (urlValue.startsWith("http://", true)
+                                    || urlValue.startsWith("https://", true)
+                                ) {
+                                    editorView.addUrl(urlValue)
+                                } else {
+                                    Toast.makeText(
+                                        this,
+                                        com.ebolo.krichtexteditor.R.string.link_missing_protocol,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                            it.setNegativeButton(android.R.string.cancel) { _, _ -> }
+                        }.show()
+                    }
                 }
             )
         )
