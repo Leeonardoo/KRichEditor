@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.*
 import android.webkit.WebChromeClient
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.*
 import androidx.annotation.StyleRes
@@ -112,6 +113,7 @@ class KRichEditorView : FrameLayout {
         com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog
 
     fun initView(options: Options = Options.DEFAULT) {
+        WebView.setWebContentsDebuggingEnabled(true)
         onInitialized = options.onInitialized
         placeHolder = options.placeHolder
         imageButtonAction = options.imageButtonAction

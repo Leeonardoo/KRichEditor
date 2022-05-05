@@ -315,6 +315,31 @@ class RichEditor {
      */
     fun enable() = load("javascript:enable()")
 
+    /**
+     * Method to change the background color of the editor container
+     *
+     * @param colorHex New background color preferably in Hex string
+     */
+    fun setContainerBackgroundColor(colorHex: String) =
+        load("javascript:setContainerBackgroundColor('$colorHex')")
+
+    /**
+     * Method to change the background color of the editor container
+     *
+     * @param colorHex New background color preferably in Hex string
+     */
+    fun setTextColor(colorHex: String) =
+        load("javascript:setTextColor('$colorHex')")
+
+    /**
+     * Method to change the container text-size. Other formatting
+     * options such as Heading will be based on this size
+     *
+     * @param fontSizePx New fontSize in px
+     */
+    fun setTextSize(fontSizePx: Float) =
+        load("javascript:setTextSize('${fontSizePx}px')")
+
     // endregion
 
     // region Font
@@ -695,7 +720,6 @@ class RichEditor {
      */
     private fun load(trigger: String, callBack: ValueCallback<String>? = null) = mWebView.context.runOnUiThread {
         // Make sure every calls would be run on ui thread
-        WebView.setWebContentsDebuggingEnabled(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWebView.evaluateJavascript(trigger, callBack)
         } else {

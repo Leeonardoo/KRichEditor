@@ -148,3 +148,15 @@ function format(formatFunction) {
     formatFunction();
     updateCurrentStyle();
 }
+
+function setContainerBackgroundColor(color) {
+    quill.container.style.background = color
+}
+
+function setTextColor(color) {
+    quill.container.style.color = color
+}
+
+function setTextSize(size) {
+    quill.container.style.fontSize = size
+}
