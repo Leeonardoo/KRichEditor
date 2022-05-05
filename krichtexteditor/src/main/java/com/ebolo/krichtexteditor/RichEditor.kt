@@ -3,32 +3,32 @@ package com.ebolo.krichtexteditor
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Handler
 import android.util.Base64
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebView
+import android.widget.Toast
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.ui.enums.EditorButton
 import com.ebolo.krichtexteditor.utils.QuillFormat
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.util.*
-
 
 /**
  * Rich Editor = Rich Editor Action + Rich Editor Callback
  * Created by even.wu on 8/8/17.
  * Ported by ebolo(daothanhduy305) on 21/12/2017
  */
-
 class RichEditor {
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
     private var currentFormat = QuillFormat()
@@ -690,14 +690,14 @@ class RichEditor {
      * @param index Int
      * @param path String path of the image to be converted to base 64
      */
-    private fun insertImageB64(index: Int, path: String) = doAsync {
+    private fun insertImageB64(index: Int, path: String) = GlobalScope.launch(Dispatchers.Default) {
         val type = path.split('.').last().uppercase(Locale.getDefault())
         val bitmap = BitmapFactory.decodeFile(path)
         val stream = ByteArrayOutputStream().apply {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
         }
         val encodedImage = Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP)
-        uiThread {
+        withContext(Dispatchers.Main) {
             load("javascript:insertEmbed($index, 'image', 'data:image/${type.lowercase(Locale.getDefault())};base64, $encodedImage')")
         }
     }
@@ -735,11 +735,12 @@ class RichEditor {
      * @param trigger String script to be evaluated
      * @param callBack ValueCallback<String>?
      */
-    private fun load(trigger: String, callBack: ValueCallback<String>? = null) =
-        mWebView.context.runOnUiThread {
+    private fun load(trigger: String, callBack: ValueCallback<String>? = null) {
+        Handler(mWebView.context.mainLooper).post {
             // Make sure every calls would be run on ui thread
             mWebView.evaluateJavascript(trigger, callBack)
         }
+    }
 
     /**
      * A bridge between Jvm api and JS api
@@ -783,13 +784,23 @@ class RichEditor {
             EditorButton.LINK -> try {
                 createLink(options[0] as String)
             } catch (e: Exception) {
-                mWebView.context.toast("Wrong param(s)!")
+                e.printStackTrace()
+                Toast.makeText(
+                    mWebView.context,
+                    mWebView.context.getString(R.string.wrong_params),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             EditorButton.IMAGE -> getSelection {
                 try {
                     // Check params
-                    if (options.size < 2) mWebView.context.toast("Missing param(s)!")
-                    else {
+                    if (options.size < 2) {
+                        Toast.makeText(
+                            mWebView.context,
+                            mWebView.context.getString(R.string.missing_params),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
                         val selection = Gson().fromJson<Map<String, Int>>(it)
                         // BASE64 mode and URL mode
                         if (options[0] as Boolean) insertImageB64(
@@ -799,7 +810,12 @@ class RichEditor {
                         else insertImage(selection["index"]!!, options[1] as String)
                     }
                 } catch (e: Exception) {
-                    mWebView.context.toast("Something went wrong! Param?")
+                    e.printStackTrace()
+                    Toast.makeText(
+                        mWebView.context,
+                        mWebView.context.getString(R.string.wrong_params),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             EditorButton.SIZE -> fontSize(options[0] as String)

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="font_size">Tamanho</string>
+    <string name="font_color">Cor do texto</string>
+    <string name="font_spacing">Espaçamento exato</string>
+    <string name="font_none">Nenhu,</string>
+    <string name="font_highlight_color">Cor de fundo</string>
+    <string name="font_default_text">AaBbCcDd</string>
+    <string name="font_style_normal">Normal</string>
+    <string name="font_style_heading_1">Heading 1</string>
+    <string name="font_style_heading_2">Heading 2</string>
+    <string name="font_style_heading_3">Heading 3</string>
+    <string name="font_insert">Inserir</string>
+    <string name="edit_hyperlink">Editar link</string>
+    <string name="url_address">URL:</string>
+    <string name="text_to_display">Texto a exibir:</string>
+    <string name="edit_table">Editar Tablela</string>
+    <string name="heading_4">Heading 4</string>
+    <string name="heading_5">Heading 5</string>
+    <string name="heading_6">Heading 6</string>
+    <string name="columns">Colunas</string>
+    <string name="rows">Linhas</string>
+    <string name="font_sizes_title">Tamanhos de fonte</string>
+    <string name="font_size_small">Pequeno</string>
+    <string name="font_size_normal">Normal</string>
+    <string name="font_size_large">Grande</string>
+    <string name="font_size_huge">Muito grande</string>
+    <string name="link_empty_warning">Selecione o texto antes!</string>
+    <string name="link_missing_protocol">Faltando prefixo(http or https) na URL!</string>
+    <string name="wrong_params">Parâmetro(s) incorreto(s)!</string>
+    <string name="missing_params">Parâmetro(s) faltando!</string>
+</resources>

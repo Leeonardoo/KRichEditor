@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">KRichTextEditor</string>
-
     <string name="font_size">Size</string>
     <string name="font_color">Text Color</string>
     <string name="font_spacing">Exact Spacing</string>
@@ -15,8 +13,6 @@
     <string name="edit_hyperlink">Edit Hyperlink</string>
     <string name="url_address">URL:</string>
     <string name="text_to_display">Text to display:</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
     <string name="edit_table">Edit Table</string>
     <string name="heading_4">Heading 4</string>
     <string name="heading_5">Heading 5</string>
@@ -30,4 +26,6 @@
     <string name="font_size_huge">huge</string>
     <string name="link_empty_warning">Select text first!</string>
     <string name="link_missing_protocol">Missing protocol (http or https)!</string>
+    <string name="wrong_params">Wrong param(s)!</string>
+    <string name="missing_params">Missing param(s)!</string>
 </resources>
