@@ -1,4 +1,4 @@
-package com.ebolo.krichtexteditor.ui.widgets
+package com.ebolo.krichtexteditor.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -12,7 +12,5 @@ class TextEditorWebView: WebView {
 
     override fun onCheckIsTextEditor() = true
 
-    fun initWebView(initCall: (TextEditorWebView) -> Unit) {
-        initCall(this)
-    }
+    fun initWebView(initCall: (TextEditorWebView) -> Unit) = initCall(this)
 }

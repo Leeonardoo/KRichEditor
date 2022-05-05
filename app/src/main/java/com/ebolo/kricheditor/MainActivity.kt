@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton
+import com.ebolo.krichtexteditor.ui.enums.EditorButton
 import com.ebolo.krichtexteditor.views.KRichEditorView
 import com.ebolo.krichtexteditor.views.Options
 import com.esafirm.imagepicker.features.ImagePicker

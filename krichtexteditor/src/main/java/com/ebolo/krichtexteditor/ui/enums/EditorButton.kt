@@ -1,4 +1,4 @@
-package com.ebolo.krichtexteditor.ui.widgets
+package com.ebolo.krichtexteditor.ui.enums
 
 import com.ebolo.krichtexteditor.R
 

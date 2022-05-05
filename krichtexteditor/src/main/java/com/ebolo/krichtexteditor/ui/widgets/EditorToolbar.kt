@@ -2,6 +2,7 @@ package com.ebolo.krichtexteditor.ui.widgets
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Handler
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -9,7 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.R
 import com.ebolo.krichtexteditor.RichEditor
-import org.jetbrains.anko.runOnUiThread
+import com.ebolo.krichtexteditor.ui.enums.EditorButton
 
 class EditorToolbar(private val editor: RichEditor, private val buttonsLayout: List<EditorButton>) {
     var linkButtonAction: (() -> Unit)? = null
@@ -54,7 +55,7 @@ class EditorToolbar(private val editor: RichEditor, private val buttonsLayout: L
         buttonsLayout.forEach { buttonId ->
             eventBus.on("style", "style_$buttonId") {
                 val state = it as Boolean
-                context.runOnUiThread {
+                Handler(context.mainLooper).post {
                     buttons[buttonId]?.setColorFilter(
                         when {
                             state -> buttonActivatedColor

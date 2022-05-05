@@ -2,21 +2,18 @@ package com.ebolo.krichtexteditor.ui.widgets
 
 import android.content.Context
 import android.graphics.Color
-import android.util.TypedValue
 import android.view.Gravity
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.padding
+import com.ebolo.krichtexteditor.utils.toPx
 import java.util.*
+import kotlin.math.roundToInt
 
 /**
  * Color PaletteView
  * Created by even.wu on 10/8/17.
  * Ported by ebolo(daothanhduy305) on 20/12/2017
  */
-
 class ColorPaletteView(context: Context) : HorizontalScrollView(context) {
     private val mColorList = listOf(
         "#000000", "#424242", "#636363", "#9C9C94", "#CEC6CE", "#EFEFEF",
@@ -30,7 +27,7 @@ class ColorPaletteView(context: Context) : HorizontalScrollView(context) {
         "#21104A", "#4A1031"
     )
 
-    private lateinit var colorViews: Map<String, RoundView>
+    private var colorViews: Map<String, RoundView>
 
     var selectedColor: String = ""
         set(value) {
@@ -43,19 +40,16 @@ class ColorPaletteView(context: Context) : HorizontalScrollView(context) {
     private var mOnColorChangeListener: ((String) -> Unit)? = null
 
     init {
-        linearLayout {
+        val linearLayout = LinearLayout(context)
+
+        with(linearLayout) {
             gravity = Gravity.CENTER
-            padding = dip(16)
 
-            val width = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 25f,
-                resources.displayMetrics
-            ).toInt()
+            val paddingValue = 12f.toPx(context.resources).roundToInt()
+            setPadding(paddingValue, paddingValue, paddingValue, paddingValue)
 
-            val margin = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 10f,
-                resources.displayMetrics
-            ).toInt()
+            val width = 25f.toPx(context.resources).roundToInt()
+            val margin = 10f.toPx(context.resources).roundToInt()
 
             colorViews = mColorList.associateWith { color ->
                 val roundView = RoundView(context)
@@ -72,6 +66,8 @@ class ColorPaletteView(context: Context) : HorizontalScrollView(context) {
                 roundView
             }
         }
+
+        addView(linearLayout)
     }
 
     fun onColorChange(callback: (String) -> Unit) {

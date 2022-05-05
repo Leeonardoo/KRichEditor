@@ -1,14 +1,13 @@
 package com.ebolo.krichtexteditor.ui
 
 import android.widget.ImageView
-import org.jetbrains.anko.dip
+import com.ebolo.krichtexteditor.utils.toPx
+import kotlin.math.roundToInt
 
-/**
- * This file declares various of styles using in DSL layouts
- * Created by daothanhduy305(ebolo) on 29-Dec-17.
- */
-
-fun ImageView.actionImageViewStyle() {
-    layoutParams.width = dip(42)
-    layoutParams.height = dip(42)
+fun ImageView.actionImageViewSize() {
+    val size = 42f.toPx(context.resources).roundToInt()
+    with(layoutParams) {
+        width = size
+        height = size
+    }
 }

@@ -14,11 +14,11 @@ import androidx.core.widget.NestedScrollView
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.R
 import com.ebolo.krichtexteditor.RichEditor
-import com.ebolo.krichtexteditor.ui.actionImageViewStyle
+import com.ebolo.krichtexteditor.ui.actionImageViewSize
 import com.ebolo.krichtexteditor.ui.widgets.ColorPaletteView
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton
+import com.ebolo.krichtexteditor.ui.enums.EditorButton
 import com.ebolo.krichtexteditor.ui.widgets.EditorToolbar
-import com.ebolo.krichtexteditor.ui.widgets.TextEditorWebView
+import com.ebolo.krichtexteditor.ui.view.TextEditorWebView
 import com.ebolo.krichtexteditor.utils.rgbToHex
 import com.github.salomonbrys.kotson.fromJson
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -209,7 +209,7 @@ class KRichEditorView : FrameLayout {
                                 onClick { onMenuButtonClicked(type) }
                             }.lparams {
                                 if (neighbor) marginStart = dip(16)
-                            }.apply { actionImageViewStyle() })
+                            }.apply { actionImageViewSize() })
 
                             justifyButton(
                                 EditorButton.JUSTIFY_LEFT,
@@ -249,7 +249,7 @@ class KRichEditorView : FrameLayout {
                                 onClick { onMenuButtonClicked(type) }
                             }
                                 .lparams { weight = 1f }
-                                .apply { actionImageViewStyle() })
+                                .apply { actionImageViewSize() })
 
                             formatButton(EditorButton.BOLD, R.drawable.ic_format_bold)
                             formatButton(EditorButton.ITALIC, R.drawable.ic_format_italic)
@@ -449,7 +449,7 @@ class KRichEditorView : FrameLayout {
                                     onClick { onMenuButtonClicked(item.first) }
                                 }
                                     .lparams { if (isSecond) marginStart = dip(32) }
-                                    .apply { actionImageViewStyle() }
+                                    .apply { actionImageViewSize() }
                             )
 
                         formatButton(item1)
@@ -508,7 +508,7 @@ class KRichEditorView : FrameLayout {
                                 padding = dip(8)
 
                                 onClick { onMenuButtonClicked(type) }
-                            }.lparams { weight = 1f }.apply { actionImageViewStyle() }
+                            }.lparams { weight = 1f }.apply { actionImageViewSize() }
 
                         insertButton(EditorButton.CHECK, R.drawable.ic_format_list_check)
                         insertButton(EditorButton.IMAGE, R.drawable.ic_insert_photo)

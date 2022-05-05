@@ -10,7 +10,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebView
 import com.bitbucket.eventbus.EventBus
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton
+import com.ebolo.krichtexteditor.ui.enums.EditorButton
 import com.ebolo.krichtexteditor.utils.QuillFormat
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson

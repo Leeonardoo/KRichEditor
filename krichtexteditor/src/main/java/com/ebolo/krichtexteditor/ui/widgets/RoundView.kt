@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.view.View
-import org.jetbrains.anko.backgroundColor
 
 /**
  * Round View
@@ -18,7 +17,7 @@ class RoundView(context: Context): View(context) {
     private var bgColor = 0xFFFFFF
 
     init {
-        backgroundColor = Color.WHITE
+        setBackgroundColor(Color.WHITE)
 
         mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mPaint.strokeWidth = 4f

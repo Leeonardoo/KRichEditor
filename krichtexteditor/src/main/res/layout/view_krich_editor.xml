@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.ebolo.krichtexteditor.ui.widgets.TextEditorWebView
-        android:layout_width="match_parent"
+    <com.ebolo.krichtexteditor.ui.view.TextEditorWebView
         android:id="@+id/web_view"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
 
     <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/toolbar" >
-        
+        android:orientation="vertical">
+
         <LinearLayout
-            android:layout_width="match_parent"
             android:id="@+id/inner_toolbar"
+            android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:background ="@color/editor_toolbar_bg_color"
+            android:background="@color/editor_toolbar_bg_color"
             android:gravity="center_vertical"
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/menu_button"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
-                android:id="@+id/menu_button"
                 android:padding="10dp"
                 android:src="@drawable/ic_action" />
 
@@ -52,18 +54,19 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/editor_menu_container"
             android:layout_width="match_parent"
             android:visibility="gone"
-            android:id="@+id/editor_menu_container"
-            android:layout_height="132dp">
+            android:layout_height="164dp">
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/editor_menu_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editor_menu_scroll_view"/>
+                android:scrollbars="vertical"
+                android:layout_height="wrap_content" />
 
         </FrameLayout>
-        
+
     </LinearLayout>
-    
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
