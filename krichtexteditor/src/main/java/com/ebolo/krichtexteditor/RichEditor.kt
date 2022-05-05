@@ -3,7 +3,6 @@ package com.ebolo.krichtexteditor
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.util.Base64
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
@@ -12,28 +11,6 @@ import android.webkit.ValueCallback
 import android.webkit.WebView
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.ui.widgets.EditorButton
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.BOLD
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.CODE_VIEW
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H1
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H2
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H3
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H4
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H5
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.H6
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.ITALIC
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.JUSTIFY_CENTER
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.JUSTIFY_FULL
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.JUSTIFY_LEFT
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.JUSTIFY_RIGHT
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.LINK
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.NORMAL
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.ORDERED
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.SIZE
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.STRIKETHROUGH
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.SUBSCRIPT
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.SUPERSCRIPT
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.UNDERLINE
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.UNORDERED
 import com.ebolo.krichtexteditor.utils.QuillFormat
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -57,19 +34,31 @@ class RichEditor {
     private var currentFormat = QuillFormat()
     var html: String? = null
 
-    private val mFontBlockGroup by lazy { listOf(NORMAL, H1, H2, H3, H4, H5, H6) }
-    private val mTextAlignGroup by lazy {
-        mapOf(
-                JUSTIFY_LEFT to "",
-                JUSTIFY_CENTER to "center",
-                JUSTIFY_RIGHT to "right",
-                JUSTIFY_FULL to "justify"
+    private val mFontBlockGroup by lazy {
+        listOf(
+            EditorButton.NORMAL,
+            EditorButton.H1,
+            EditorButton.H2,
+            EditorButton.H3,
+            EditorButton.H4,
+            EditorButton.H5,
+            EditorButton.H6
         )
     }
-    private val mListStyleGroup by lazy{ mapOf(
-            ORDERED to "ordered",
-            UNORDERED to "bullet"
-    ) }
+    private val mTextAlignGroup by lazy {
+        mapOf(
+            EditorButton.JUSTIFY_LEFT to "",
+            EditorButton.JUSTIFY_CENTER to "center",
+            EditorButton.JUSTIFY_RIGHT to "right",
+            EditorButton.JUSTIFY_FULL to "justify"
+        )
+    }
+    private val mListStyleGroup by lazy {
+        mapOf(
+            EditorButton.ORDERED to "ordered",
+            EditorButton.UNORDERED to "bullet"
+        )
+    }
 
     lateinit var placeHolder: String
         // Allow the webview layer to access the placeholder string
@@ -77,7 +66,7 @@ class RichEditor {
 
     lateinit var mWebView: WebView
     var onInitialized: (() -> Unit)? = null
-    var styleUpdatedCallback: ((type: Int, value: Any) -> Unit)? = null
+    var styleUpdatedCallback: ((type: EditorButton, value: Any) -> Unit)? = null
     var onTextChanged: ((String) -> Unit)? = null
 
     // region Low level function access
@@ -91,7 +80,9 @@ class RichEditor {
      * @param html String
      */
     @JavascriptInterface
-    fun returnHtml(html: String) { this.html = html }
+    fun returnHtml(html: String) {
+        this.html = html
+    }
 
     /**
      * Method to allow the lower webview layer to be able to set the current style data
@@ -105,7 +96,9 @@ class RichEditor {
     fun updateCurrentStyle(currentStyle: String) = try {
         Log.d("FontStyle", currentStyle)
         updateStyle(gson.fromJson(currentStyle))
-    } catch (e: Exception) {} // ignored
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 
     /**
      * Method to allow the lower webview layer to be able to log the message to Android logging
@@ -150,7 +143,9 @@ class RichEditor {
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1
      */
-    interface OnHtmlReturned { fun process(html: String) }
+    interface OnHtmlReturned {
+        fun process(html: String)
+    }
 
     /**
      * Interface as the callback for Java API on text returned
@@ -158,7 +153,9 @@ class RichEditor {
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1
      */
-    interface OnTextReturned { fun process(text: String) }
+    interface OnTextReturned {
+        fun process(text: String)
+    }
 
     /**
      * Interface as the callback for Java API on contents (delta) returned
@@ -166,7 +163,9 @@ class RichEditor {
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1
      */
-    interface OnContentsReturned { fun process(contents: String) }
+    interface OnContentsReturned {
+        fun process(contents: String)
+    }
 
     // endregion
 
@@ -180,7 +179,8 @@ class RichEditor {
         try {
             updateStyle(gson.fromJson(it))
         } catch (e: Exception) {
-        } // ignored
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -195,23 +195,23 @@ class RichEditor {
         // Log.d("FontStyle", gson.toJson(fontStyle))
 
         if (currentFormat.isBold != quillFormat.isBold) {
-            notifyFontStyleChange(BOLD, quillFormat.isBold ?: false)
+            notifyFontStyleChange(EditorButton.BOLD, quillFormat.isBold ?: false)
         }
 
         if (currentFormat.isItalic != quillFormat.isItalic) {
-            notifyFontStyleChange(ITALIC, quillFormat.isItalic ?: false)
+            notifyFontStyleChange(EditorButton.ITALIC, quillFormat.isItalic ?: false)
         }
 
         if (currentFormat.isUnderline != quillFormat.isUnderline) {
-            notifyFontStyleChange(UNDERLINE, quillFormat.isUnderline ?: false)
+            notifyFontStyleChange(EditorButton.UNDERLINE, quillFormat.isUnderline ?: false)
         }
 
         if (currentFormat.isStrike != quillFormat.isStrike) {
-            notifyFontStyleChange(STRIKETHROUGH, quillFormat.isStrike?: false)
+            notifyFontStyleChange(EditorButton.STRIKETHROUGH, quillFormat.isStrike ?: false)
         }
 
         if (currentFormat.isCode != quillFormat.isCode) {
-            notifyFontStyleChange(CODE_VIEW, quillFormat.isCode ?: false)
+            notifyFontStyleChange(EditorButton.CODE_VIEW, quillFormat.isCode ?: false)
         }
 
         quillFormat.header = quillFormat.header ?: 0
@@ -223,14 +223,19 @@ class RichEditor {
         }
 
         if (currentFormat.script != quillFormat.script) {
-            notifyFontStyleChange(SUBSCRIPT, (quillFormat.script == "sub"))
-            notifyFontStyleChange(SUPERSCRIPT, (quillFormat.script == "super"))
+            notifyFontStyleChange(EditorButton.SUBSCRIPT, (quillFormat.script == "sub"))
+            notifyFontStyleChange(EditorButton.SUPERSCRIPT, (quillFormat.script == "super"))
         }
 
         quillFormat.align = quillFormat.align ?: ""
 
         if (currentFormat.align != quillFormat.align) {
-            mTextAlignGroup.forEach { notifyFontStyleChange(it.key, (quillFormat.align == it.value)) }
+            mTextAlignGroup.forEach {
+                notifyFontStyleChange(
+                    it.key,
+                    (quillFormat.align == it.value)
+                )
+            }
         }
 
         if (currentFormat.list != quillFormat.list) {
@@ -239,10 +244,10 @@ class RichEditor {
             }
         }
 
-        notifyFontStyleChange(SIZE, quillFormat.size)
+        notifyFontStyleChange(EditorButton.SIZE, quillFormat.size)
 
         if (currentFormat.link != quillFormat.link)
-            notifyFontStyleChange(LINK, !quillFormat.link.isNullOrBlank())
+            notifyFontStyleChange(EditorButton.LINK, !quillFormat.link.isNullOrBlank())
 
         currentFormat = quillFormat
     }
@@ -256,7 +261,7 @@ class RichEditor {
      * @param type Int of the action button
      * @param value Any data for the action
      */
-    private fun notifyFontStyleChange(@EditorButton.Companion.ActionType type: Int, value: Any) {
+    private fun notifyFontStyleChange(type: EditorButton, value: Any) {
         when (styleUpdatedCallback) {
             null -> EventBus.getInstance().post("style", "style_$type", value)
             else -> styleUpdatedCallback!!.invoke(type, value)
@@ -296,7 +301,7 @@ class RichEditor {
         load("javascript:focus()")
         if (showKeyboard)
             (mWebView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?)
-                    ?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+                ?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
     }
 
     /**
@@ -493,7 +498,8 @@ class RichEditor {
      *
      * @param callback ValueCallback<String>? action to do
      */
-    fun getSelection(callback: ValueCallback<String>? = null) = load("javascript:getSelection()", callback)
+    fun getSelection(callback: ValueCallback<String>? = null) =
+        load("javascript:getSelection()", callback)
 
     /**
      * Method to get the current style at the cursor and do (any) actions on it
@@ -503,7 +509,8 @@ class RichEditor {
      *
      * @param callback ValueCallback<String>? action to do
      */
-    private fun getStyle(callback: ValueCallback<String>? = null) = load("javascript:getStyle()", callback)
+    private fun getStyle(callback: ValueCallback<String>? = null) =
+        load("javascript:getStyle()", callback)
 
     /**
      * Private method to get the HTML content and do (any) actions on the result
@@ -516,7 +523,8 @@ class RichEditor {
      */
     // Correcting javascript method name from `getHtmlContent()' to 'getHtml()'
     // private fun getHtmlContent(callBack: ValueCallback<String>) = load("javascript:getHtmlContent()", callBack)
-    private fun getHtmlContent(callBack: ValueCallback<String>) = load("javascript:getHtml()", callBack)
+    private fun getHtmlContent(callBack: ValueCallback<String>) =
+        load("javascript:getHtml()", callBack)
 
     /**
      * Method to get the HTML content and do (any) actions on the result
@@ -526,14 +534,20 @@ class RichEditor {
      *
      * @param callback ValueCallback<String> action to do
      */
-    fun getHtmlContent(callback: ((html: String) -> Unit)? = null) = getHtmlContent( ValueCallback { html ->
-        val escapedData = html
+    fun getHtmlContent(callback: ((html: String) -> Unit)? = null) =
+        getHtmlContent(ValueCallback { html ->
+            val escapedData = html
                 // There a bug? that the returned result has the unicode for < instead of the  char
                 // and has double \\. So we are escaping them here
                 .replace(oldValue = "\\u003C", newValue = "<")
                 .replace(oldValue = "\\\"", newValue = "\"")
-        callback?.invoke(escapedData.substring(startIndex = 1, endIndex = escapedData.length - 1))
-    } )
+            callback?.invoke(
+                escapedData.substring(
+                    startIndex = 1,
+                    endIndex = escapedData.length - 1
+                )
+            )
+        })
 
     /**
      * Method to allow setting the HTML content to the editor
@@ -545,8 +559,8 @@ class RichEditor {
      * @param replaceCurrentContent Boolean set to true replace the whole content, false to concatenate
      */
     fun setHtmlContent(
-            htmlContent: String,
-            replaceCurrentContent: Boolean = true
+        htmlContent: String,
+        replaceCurrentContent: Boolean = true
     ) = load("javascript:setHtml('$htmlContent', $replaceCurrentContent)")
 
     /**
@@ -577,9 +591,9 @@ class RichEditor {
      *
      * @param callback ValueCallback<String> action to do
      */
-    fun getText(callback: ((text: String) -> Unit)?) = getText( ValueCallback {
+    fun getText(callback: ((text: String) -> Unit)?) = getText(ValueCallback {
         callback?.invoke(it.substring(1, it.length - 1).replace("\\n", "\n"))
-    } )
+    })
 
     /**
      * Method to get the text content and do (any) actions on the result - Java version
@@ -599,7 +613,8 @@ class RichEditor {
      *
      * @param callback ValueCallback<String> action to do
      */
-    private fun getContents(callback: ValueCallback<String>) = load("javascript:getContents()", callback)
+    private fun getContents(callback: ValueCallback<String>) =
+        load("javascript:getContents()", callback)
 
     /**
      * Method to get the delta content and do (any) actions on the result
@@ -609,7 +624,8 @@ class RichEditor {
      *
      * @param callback ValueCallback<String> action to do
      */
-    fun getContents(callback: ((text: String) -> Unit)?) = getContents( ValueCallback { callback?.invoke(it) } )
+    fun getContents(callback: ((text: String) -> Unit)?) =
+        getContents(ValueCallback { callback?.invoke(it) })
 
     /**
      * Method to get the delta content and do (any) actions on the result - Java version
@@ -662,7 +678,8 @@ class RichEditor {
      * @param index Int
      * @param url String
      */
-    private fun insertImage(index: Int, url: String) = load("javascript:insertEmbed($index, 'image', '$url')")
+    private fun insertImage(index: Int, url: String) =
+        load("javascript:insertEmbed($index, 'image', '$url')")
 
     /**
      * Method to allow inserting an image as base 64 data to a specific selection index
@@ -718,14 +735,11 @@ class RichEditor {
      * @param trigger String script to be evaluated
      * @param callBack ValueCallback<String>?
      */
-    private fun load(trigger: String, callBack: ValueCallback<String>? = null) = mWebView.context.runOnUiThread {
-        // Make sure every calls would be run on ui thread
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    private fun load(trigger: String, callBack: ValueCallback<String>? = null) =
+        mWebView.context.runOnUiThread {
+            // Make sure every calls would be run on ui thread
             mWebView.evaluateJavascript(trigger, callBack)
-        } else {
-            mWebView.loadUrl(trigger)
         }
-    }
 
     /**
      * A bridge between Jvm api and JS api
@@ -736,39 +750,41 @@ class RichEditor {
      * @param mActionType Int type of calling action
      * @param options Array<out Any>
      */
-    fun command(@EditorButton.Companion.ActionType mActionType: Int, vararg options: Any) {
+    fun command(mActionType: EditorButton, vararg options: Any) {
         when (mActionType) {
             EditorButton.UNDO -> undo()
             EditorButton.REDO -> redo()
-            BOLD -> bold()
-            ITALIC -> italic()
-            UNDERLINE -> underline()
-            SUBSCRIPT -> script("sub")
-            SUPERSCRIPT -> script("super")
-            STRIKETHROUGH -> strikethrough()
-            NORMAL -> header(0)
-            H1 -> header(1)
-            H2 -> header(2)
-            H3 -> header(3)
-            H4 -> header(4)
-            H5 -> header(5)
-            H6 -> header(6)
-            JUSTIFY_LEFT -> align("")
-            JUSTIFY_CENTER -> align("center")
-            JUSTIFY_RIGHT -> align("right")
-            JUSTIFY_FULL -> align("justify")
-            ORDERED -> insertOrderedList()
-            UNORDERED -> insertUnorderedList()
+            EditorButton.BOLD -> bold()
+            EditorButton.ITALIC -> italic()
+            EditorButton.UNDERLINE -> underline()
+            EditorButton.SUBSCRIPT -> script("sub")
+            EditorButton.SUPERSCRIPT -> script("super")
+            EditorButton.STRIKETHROUGH -> strikethrough()
+            EditorButton.NORMAL -> header(0)
+            EditorButton.H1 -> header(1)
+            EditorButton.H2 -> header(2)
+            EditorButton.H3 -> header(3)
+            EditorButton.H4 -> header(4)
+            EditorButton.H5 -> header(5)
+            EditorButton.H6 -> header(6)
+            EditorButton.JUSTIFY_LEFT -> align("")
+            EditorButton.JUSTIFY_CENTER -> align("center")
+            EditorButton.JUSTIFY_RIGHT -> align("right")
+            EditorButton.JUSTIFY_FULL -> align("justify")
+            EditorButton.ORDERED -> insertOrderedList()
+            EditorButton.UNORDERED -> insertUnorderedList()
             EditorButton.CHECK -> insertCheckList()
             EditorButton.INDENT -> indent()
             EditorButton.OUTDENT -> outdent()
             EditorButton.LINE -> insertHorizontalRule()
             EditorButton.BLOCK_QUOTE -> formatBlockquote()
             EditorButton.BLOCK_CODE -> formatBlockCode()
-            CODE_VIEW -> codeView()
-            LINK -> try {
+            EditorButton.CODE_VIEW -> codeView()
+            EditorButton.LINK -> try {
                 createLink(options[0] as String)
-            } catch (e: Exception) { mWebView.context.toast("Wrong param(s)!") }
+            } catch (e: Exception) {
+                mWebView.context.toast("Wrong param(s)!")
+            }
             EditorButton.IMAGE -> getSelection {
                 try {
                     // Check params
@@ -786,7 +802,7 @@ class RichEditor {
                     mWebView.context.toast("Something went wrong! Param?")
                 }
             }
-            SIZE -> fontSize(options[0] as String)
+            EditorButton.SIZE -> fontSize(options[0] as String)
             EditorButton.FORE_COLOR -> foreColor(options[0] as String)
             EditorButton.BACK_COLOR -> backColor(options[0] as String)
         }

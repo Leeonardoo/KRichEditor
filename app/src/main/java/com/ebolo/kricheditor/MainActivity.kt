@@ -2,23 +2,16 @@ package com.ebolo.kricheditor
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ebolo.krichtexteditor.ui.widgets.EditorButton
-import com.ebolo.krichtexteditor.ui.widgets.EditorButton.Companion.IMAGE
 import com.ebolo.krichtexteditor.views.KRichEditorView
 import com.ebolo.krichtexteditor.views.Options
 import com.esafirm.imagepicker.features.ImagePicker
 import io.paperdb.Paper
-import com.ebolo.kricheditor.R
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.setContentView
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -30,10 +23,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
 
         editorView.initView(
-            Options().apply {
-                imageButtonAction = { ImagePicker.create(this@MainActivity).start() }
-                placeHolder = "Write something cool..."
-
+            Options(
+                onClickImageButton = { ImagePicker.create(this@MainActivity).start() },
+                placeHolder = "Write something cool..",
                 buttonsLayout = listOf(
                     EditorButton.UNDO,
                     EditorButton.REDO,
@@ -64,19 +56,19 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     EditorButton.BLOCK_QUOTE,
                     EditorButton.BLOCK_CODE,
                     EditorButton.CODE_VIEW
-                )
+                ),
                 onInitialized = {
                     // Simulate loading saved contents action
                     editorView.editor.setContents(
                         Paper.book("demo").read("content", "")
                     )
                 }
-
-                editorView.editor.onTextChanged = {
-                    Log.d("MainActivity", "Content changed to: $it")
-                }
-            }
+            )
         )
+
+        editorView.editor.onTextChanged = {
+            Log.d("MainActivity", "Content changed to: $it")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -107,7 +99,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 true
             }
             R.id.action_save_content -> {
-                editorView.editor.getContents{ contents -> // String
+                editorView.editor.getContents { contents -> // String
                     Paper.book("demo").write("content", contents)
                 }
                 true
@@ -127,7 +119,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                         "Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg")*/
 
                 // For BASE64, image file path would be passed instead
-                editorView.editor.command(IMAGE, true, image.path)
+                editorView.editor.command(EditorButton.IMAGE, true, image.path)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

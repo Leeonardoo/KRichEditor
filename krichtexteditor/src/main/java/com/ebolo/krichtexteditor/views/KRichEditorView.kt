@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.*
 import android.webkit.WebChromeClient
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.*
 import androidx.annotation.StyleRes
@@ -32,15 +31,13 @@ import ru.whalemare.sheetmenu.SheetMenu
 
 class KRichEditorView : FrameLayout {
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context) : super(context) {
-    }
+    constructor(context: Context) : super(context)
 
     private val eventBus by lazy { EventBus.getInstance() }
-    private val menuFormatButtons = mutableMapOf<Int, ImageView>()
-    private val menuFormatHeadingBlocks = mutableMapOf<Int, View>()
+    private val menuFormatButtons = mutableMapOf<EditorButton, ImageView>()
+    private val menuFormatHeadingBlocks = mutableMapOf<EditorButton, View>()
 
     private lateinit var fontSizeTextView: TextView
     private lateinit var textColorPalette: ColorPaletteView
@@ -112,17 +109,16 @@ class KRichEditorView : FrameLayout {
     private var dialogStyle =
         com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog
 
-    fun initView(options: Options = Options.DEFAULT) {
+    fun initView(options: Options) {
         //WebView.setWebContentsDebuggingEnabled(true)
         onInitialized = options.onInitialized
         placeHolder = options.placeHolder
-        imageButtonAction = options.imageButtonAction
+        imageButtonAction = options.onClickImageButton
         buttonsLayout = options.buttonsLayout
         buttonActivatedColor = options.buttonActivatedColor
         buttonDeactivatedColor = options.buttonDeactivatedColor
         showToolbar = options.showToolbar
         readOnly = options.readOnly
-        dialogStyle = options.dialogStyle
         showMenuButton = options.showMenuButton
 
         inflate(context, R.layout.view_krich_editor, this)
@@ -202,7 +198,7 @@ class KRichEditorView : FrameLayout {
                             setPadding(16, dip(6), 16, dip(6))
 
                             fun justifyButton(
-                                @EditorButton.Companion.ActionType type: Int,
+                                type: EditorButton,
                                 drawable: Int,
                                 neighbor: Boolean = false
                             ) = menuFormatButtons.put(type, imageView(drawable) {
@@ -243,7 +239,7 @@ class KRichEditorView : FrameLayout {
                             setPadding(dip(16), dip(6), dip(16), dip(6))
 
                             fun formatButton(
-                                @EditorButton.Companion.ActionType type: Int,
+                                type: EditorButton,
                                 drawable: Int
                             ) = menuFormatButtons.put(type, imageView(drawable) {
                                 padding = dip(8)
@@ -340,7 +336,7 @@ class KRichEditorView : FrameLayout {
                         backgroundColorResource = R.color.white
 
                         fun headingBlock(
-                            @EditorButton.Companion.ActionType type: Int,
+                            type: EditorButton,
                             previewText: Pair<String, Float>,
                             text: Int,
                             neighbor: Boolean = false
@@ -422,17 +418,17 @@ class KRichEditorView : FrameLayout {
                  * @param item4 fourth button
                  */
                 fun additionalFormatBox(
-                    item1: Pair<Int, Int>,
-                    item2: Pair<Int, Int>,
-                    item3: Pair<Int, Int>,
-                    item4: Pair<Int, Int>
+                    item1: Pair<EditorButton, Int>,
+                    item2: Pair<EditorButton, Int>,
+                    item3: Pair<EditorButton, Int>,
+                    item4: Pair<EditorButton, Int>
                 ) = linearLayout {
                     backgroundColorResource = R.color.white
                     padding = dip(16)
 
                     fun innerBox(
-                        item1: Pair<Int, Int>,
-                        item2: Pair<Int, Int>,
+                        item1: Pair<EditorButton, Int>,
+                        item2: Pair<EditorButton, Int>,
                         isSecond: Boolean = false
                     ) = linearLayout {
                         backgroundResource = R.drawable.round_rectangle_white
@@ -440,7 +436,7 @@ class KRichEditorView : FrameLayout {
                         setPadding(0, dip(8), 0, dip(8))
 
                         fun formatButton(
-                            item: Pair<Int, Int>,
+                            item: Pair<EditorButton, Int>,
                             isSecond: Boolean = false
                         ) =
                             menuFormatButtons.put(
@@ -499,7 +495,7 @@ class KRichEditorView : FrameLayout {
                         padding = dip(8)
 
                         fun insertButton(
-                            @EditorButton.Companion.ActionType type: Int,
+                            type: EditorButton,
                             drawable: Int
                         ) =
                             themedImageView(
@@ -571,7 +567,7 @@ class KRichEditorView : FrameLayout {
      * @see EditorButton
      */
     private fun onMenuButtonClicked(
-        @EditorButton.Companion.ActionType type: Int,
+        type: EditorButton,
         param: String? = null
     ) {
         when (type) {
@@ -734,10 +730,11 @@ class KRichEditorView : FrameLayout {
 /**
  * Class serve as a container of options to be transmitted to the editor to set it up
  */
-class Options {
-    var placeHolder: String = "Start writing..."
-    var imageButtonAction: (() -> Unit)? = null
-    var buttonsLayout = listOf(
+data class Options(
+    val placeHolder: String,
+    val onClickImageButton: () -> Unit = {},
+    val onClickAddUrl: () -> Unit = {},
+    val buttonsLayout: List<EditorButton> = listOf(
         EditorButton.UNDO,
         EditorButton.REDO,
         EditorButton.IMAGE,
@@ -766,60 +763,11 @@ class Options {
         EditorButton.BLOCK_QUOTE,
         EditorButton.BLOCK_CODE,
         EditorButton.CODE_VIEW
-    )
-    var buttonActivatedColor: Int = Color.CYAN
-    var buttonDeactivatedColor: Int = Color.GRAY
-    var onInitialized: (() -> Unit)? = null
-    var showToolbar = true
-    var showMenuButton = true
-    var readOnly = false
-
-    @StyleRes
-    var dialogStyle =
-        com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog
-
-    /**
-     * Method to setup the placeholder text for the web view text area
-     */
-    fun placeHolder(text: String) = this.apply { placeHolder = text }
-
-    /**
-     * Define the call back to be executed when the image button is clicked
-     */
-    fun onImageButtonClicked(action: Runnable) = this.apply { imageButtonAction = { action.run() } }
-
-    /**
-     * Define the custom layout for the buttons toolbar
-     */
-    fun buttonLayout(layout: List<Int>) = this.apply { buttonsLayout = layout }
-
-    /**
-     * Define the color of the activated buttons in the toolbar
-     */
-    fun buttonActivatedColorResource(res: Int) = this.apply { buttonActivatedColor = res }
-
-    /**
-     * Define the color of the de-ctivated buttons in the toolbar
-     */
-    fun buttonDeactivatedColorResource(res: Int) = this.apply { buttonDeactivatedColor = res }
-
-    /**
-     * Define the callback to be executed on editor initialized
-     */
-    fun onInitialized(action: Runnable) = this.apply { onInitialized = { action.run() } }
-
-    /**
-     * Define whether the toolbar must be hidden or not
-     */
-    fun showToolbar(show: Boolean) = this.apply { showToolbar = show }
-
-    /**
-     * Define whether the text view is disabled or not (read only)
-     */
-    fun readOnly(disable: Boolean) = this.apply { readOnly = disable }
-
-    companion object {
-        @JvmField
-        val DEFAULT = Options()
-    }
-}
+    ),
+    val buttonActivatedColor: Int = Color.CYAN,
+    val buttonDeactivatedColor: Int = Color.GRAY,
+    val onInitialized: () -> Unit = {},
+    val showToolbar: Boolean = true,
+    val showMenuButton: Boolean = true,
+    val readOnly: Boolean = false
+)

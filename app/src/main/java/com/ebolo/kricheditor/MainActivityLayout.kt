@@ -13,7 +13,7 @@ class MainActivityLayout: AnkoComponent<MainActivity> {
              */
             val toolbar = themedToolbar(R.style.AppTheme_AppBarOverlay) {
                 backgroundColorResource = R.color.colorPrimary
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) popupTheme = R.style.AppTheme_PopupOverlay
+                popupTheme = R.style.AppTheme_PopupOverlay
             }.lparams(width = matchParent) {
                 val tv = TypedValue()
                 if (ui.owner.theme.resolveAttribute(R.attr.actionBarSize, tv, true)) {

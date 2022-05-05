@@ -6,23 +6,22 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import com.bitbucket.eventbus.EventBus
 import com.ebolo.krichtexteditor.R
 import com.ebolo.krichtexteditor.RichEditor
 import org.jetbrains.anko.runOnUiThread
 
-class EditorToolbar(private val editor: RichEditor, private val buttonsLayout: List<Int>) {
+class EditorToolbar(private val editor: RichEditor, private val buttonsLayout: List<EditorButton>) {
     var linkButtonAction: (() -> Unit)? = null
     var imageButtonAction: (() -> Unit)? = null
 
-    private lateinit var buttons: Map<Int, ImageView>
+    private lateinit var buttons: Map<EditorButton, ImageView>
 
     var buttonActivatedColor: Int = Color.CYAN
     var buttonDeactivatedColor: Int = Color.GRAY
 
     fun createToolbar(container: LinearLayout) {
-        fun createButton(@EditorButton.Companion.ActionType actionType: Int): ImageView {
+        fun createButton(actionType: EditorButton): ImageView {
             val buttonLayout = LayoutInflater.from(container.context).inflate(
                 R.layout.editor_toolbar_button,
                 container,
