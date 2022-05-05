@@ -695,6 +695,7 @@ class RichEditor {
      */
     private fun load(trigger: String, callBack: ValueCallback<String>? = null) = mWebView.context.runOnUiThread {
         // Make sure every calls would be run on ui thread
+        WebView.setWebContentsDebuggingEnabled(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWebView.evaluateJavascript(trigger, callBack)
         } else {
