@@ -323,18 +323,26 @@ class RichEditor {
     /**
      * Method to change the background color of the editor container
      *
-     * @param colorHex New background color preferably in Hex string
+     * @param color New background color (any format supported by CSS)
      */
-    fun setContainerBackgroundColor(colorHex: String) =
-        load("javascript:setContainerBackgroundColor('$colorHex')")
+    fun setContainerBackgroundColor(color: String) =
+        load("javascript:setContainerBackgroundColor('$color')")
 
     /**
      * Method to change the background color of the editor container
      *
-     * @param colorHex New background color preferably in Hex string
+     * @param color New text color (any format supported by CSS)
      */
-    fun setTextColor(colorHex: String) =
-        load("javascript:setTextColor('$colorHex')")
+    fun setTextColor(color: String) =
+        load("javascript:setTextColor('$color')")
+
+    /**
+     * Method to change the background color of the editor container
+     *
+     * @param color New placeholder text color (any format supported by CSS)
+     */
+    fun setPlaceholderColor(color: String) =
+        load("javascript:setPlaceholderColor('$color')")
 
     /**
      * Method to change the container text-size. Other formatting

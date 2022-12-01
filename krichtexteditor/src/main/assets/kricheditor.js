@@ -236,6 +236,10 @@ function setTextColor(color) {
     quill.container.style.color = color
 }
 
+function setPlaceholderColor(color) {
+    document.querySelector(':root').style.setProperty('--placeholder-color', color)
+}
+
 function setTextSize(size) {
     quill.container.style.fontSize = size
 }
