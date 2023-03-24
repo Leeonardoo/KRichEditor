@@ -829,6 +829,10 @@ class RichEditor {
             EditorButton.SIZE -> fontSize(options[0] as String)
             EditorButton.FORE_COLOR -> foreColor(options[0] as String)
             EditorButton.BACK_COLOR -> backColor(options[0] as String)
+            EditorButton.NONE -> {}
+            EditorButton.FAMILY -> {}
+            EditorButton.LINE_HEIGHT -> {}
+            EditorButton.TABLE -> {}
         }
     }
 
